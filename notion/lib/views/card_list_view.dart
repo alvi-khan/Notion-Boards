@@ -82,14 +82,34 @@ class _CardListViewState extends State<CardListView> {
   }
 
   ListView buildCardList() {
+    int items =
+        min(min(pageTitles.length, pageCategories.length), pageIDs.length);
     return ListView.builder(
-      itemCount:
-          min(min(pageTitles.length, pageCategories.length), pageIDs.length),
+      itemCount: items + 1,
       itemBuilder: (context, index) {
-        return PageCard(
-            id: pageIDs[index],
-            title: pageTitles[index],
-            category: pageCategories[index]);
+        if (index < items) {
+          return PageCard(
+              id: pageIDs[index],
+              title: pageTitles[index],
+              category: pageCategories[index]);
+        } else {
+          return InkWell(
+            onTap: () {},
+            child: Container(
+              margin: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueGrey.shade200, width: 2),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Colors.blueGrey.shade700),
+              child: Icon(
+                Icons.add,
+                color: Colors.white70,
+                size: 50,
+              ),
+            ),
+          );
+        }
       },
     );
   }
