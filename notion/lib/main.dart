@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notion/views/card_list_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
@@ -12,20 +13,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.blueGrey.shade900,
-          centerTitle: true,
-          title: Text(
-            "Notion Boards",
-            style: TextStyle(fontSize: 20),
-          ),
-        ),
-        body: MyHomePage(),
-        backgroundColor: Colors.blueGrey.shade900,
-      ),
+      home: MyHomePage(),
     );
   }
 }
@@ -38,8 +28,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool appBarHidden = false;
+  AppBar? appBar() {
+    if (appBarHidden) {
+      return null;
+    } else {
+      return AppBar(
+        backgroundColor: Colors.blueGrey.shade900,
+        centerTitle: true,
+        title: const Text(
+          "Notion Boards",
+          style: TextStyle(fontSize: 20),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return CardListView();
+    return Scaffold(
+      appBar: appBar(),
+      body: CardListView(),
+      backgroundColor: Colors.blueGrey.shade900,
+    );
   }
 }

@@ -5,6 +5,7 @@ import 'package:notion/models/card_list_model.dart';
 import 'package:notion/models/structure_model.dart';
 import '../card.dart';
 import '../database.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class CardListView extends StatefulWidget {
   const CardListView({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class CardListView extends StatefulWidget {
 class _CardListViewState extends State<CardListView> {
   int pageSyncInterval = 1; //seconds
   int structureSyncInterval = 5; //seconds
+  bool loading = true;
 
   List<String> pageIDs = [];
   List<String> pageTitles = [];
@@ -40,6 +42,7 @@ class _CardListViewState extends State<CardListView> {
     }
 
     setState(() {
+      loading = false;
       this.pageIDs = pageIDs;
       this.pageTitles = pageTitles;
       this.pageCategories = pageCategories;
@@ -55,7 +58,6 @@ class _CardListViewState extends State<CardListView> {
       categories.add(option.name!);
       colors.add(option.color!);
     }
-    ;
     setState(() {
       this.categories = categories;
       this.colors = colors;
@@ -90,6 +92,12 @@ class _CardListViewState extends State<CardListView> {
 
   @override
   Widget build(BuildContext context) {
+    while (loading) {
+      return const SpinKitPulse(
+        color: Colors.white,
+        size: 200,
+      );
+    }
     return buildCardList();
   }
 }
