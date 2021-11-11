@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:notion/models/card_list_model.dart';
 import 'package:notion/models/structure_model.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Database {
-  static String databaseID = '08d756be93a74965bf3106db5566b108';
-  static String token = 'secret_QgV1XWuUjXmZFLUJw4HoNZFOXfp5WxfgfZUkXepQW3b';
+  static String databaseID = dotenv.env['DATABASE_ID']!;
+  static String token = dotenv.env['TOKEN']!;
 
   static Future<StructureModel> getStructure() async {
     var url = Uri.parse('https://api.notion.com/v1/databases/$databaseID');
