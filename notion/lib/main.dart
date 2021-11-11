@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notion/views/card_list_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+import 'change_notifier.dart';
 
 Future main() async {
   await dotenv.load(fileName: '.env');
@@ -13,9 +14,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: ChangeNotifierProvider<UIChangeNotifier>(
+        create: (context) => UIChangeNotifier(),
+        child: MyHomePage(),
+      ),
     );
   }
 }
@@ -28,9 +32,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool appBarHidden = false;
   AppBar? appBar() {
-    if (appBarHidden) {
+    if (Provider.of<UIChangeNotifier>(context).loading) {
       return null;
     } else {
       return AppBar(

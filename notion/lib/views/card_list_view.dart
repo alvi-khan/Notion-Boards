@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:notion/change_notifier.dart';
 import 'package:notion/models/card_list_model.dart';
 import 'package:notion/models/structure_model.dart';
+import 'package:provider/provider.dart';
 import '../card.dart';
 import '../database.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,7 +19,6 @@ class CardListView extends StatefulWidget {
 class _CardListViewState extends State<CardListView> {
   int pageSyncInterval = 1; //seconds
   int structureSyncInterval = 5; //seconds
-  bool loading = true;
 
   List<String> pageIDs = [];
   List<String> pageTitles = [];
@@ -41,8 +42,8 @@ class _CardListViewState extends State<CardListView> {
       }
     }
 
+    Provider.of<UIChangeNotifier>(context, listen: false).setLoading(false);
     setState(() {
-      loading = false;
       this.pageIDs = pageIDs;
       this.pageTitles = pageTitles;
       this.pageCategories = pageCategories;
@@ -92,7 +93,7 @@ class _CardListViewState extends State<CardListView> {
 
   @override
   Widget build(BuildContext context) {
-    while (loading) {
+    while (Provider.of<UIChangeNotifier>(context).loading) {
       return const SpinKitPulse(
         color: Colors.white,
         size: 200,
