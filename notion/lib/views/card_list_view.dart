@@ -17,8 +17,7 @@ class CardListView extends StatefulWidget {
 }
 
 class _CardListViewState extends State<CardListView> {
-  int pageSyncInterval = 1; //seconds
-  int structureSyncInterval = 5; //seconds
+  int updateInterval = 1; //seconds
 
   List<String> pageIDs = [];
   List<String> pageTitles = [];
@@ -63,6 +62,10 @@ class _CardListViewState extends State<CardListView> {
       this.categories = categories;
       this.colors = colors;
     });
+    if (!categories.contains('No Status')) {
+      categories.add('No Status');
+      colors.add('grey');
+    }
     PageCard.categories = categories;
     PageCard.colors = colors;
   }
@@ -70,10 +73,10 @@ class _CardListViewState extends State<CardListView> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: pageSyncInterval), (timer) {
+    Timer.periodic(Duration(seconds: updateInterval), (timer) {
       getPages();
     });
-    Timer.periodic(Duration(seconds: structureSyncInterval), (timer) {
+    Timer.periodic(Duration(seconds: updateInterval), (timer) {
       getStructure();
     });
   }
