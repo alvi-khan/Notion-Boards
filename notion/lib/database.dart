@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:notion/models/card_list_model.dart';
+import 'package:notion/models/page_model.dart';
 import 'package:notion/models/structure_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -48,6 +49,69 @@ class Database {
     };
 
     var url = Uri.parse('https://api.notion.com/v1/pages/$id');
+    http.patch(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Notion-Version': '2021-08-16',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(updateData),
+    );
+  }
+
+  static Future<PageModel> getPageContent(String pageID) async {
+    var url = Uri.parse('https://api.notion.com/v1/blocks/$pageID/children');
+    var response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Notion-Version': '2021-08-16',
+      },
+    );
+    PageModel pageModel = pageModelFromJson(response.body);
+    return pageModel;
+  }
+
+  static Future<bool> deletePageContent(List<String> blockIDs) async {
+    for (var blockID in blockIDs) {
+      var url = Uri.parse("https://api.notion.com/v1/blocks/$blockID");
+      await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Notion-Version': '2021-08-16',
+          'Content-Type': 'application/json',
+        },
+      );
+    }
+    return true;
+  }
+
+  static Future<void> updatePageContent(
+      List<String> existingBlocks, String pageID, String newContent) async {
+    await deletePageContent(existingBlocks);
+
+    var updateData = {
+      "children": [
+        {
+          "object": "block",
+          "type": "paragraph",
+          "paragraph": {
+            "text": [
+              {
+                "type": "text",
+                "text": {"content": newContent, "link": null},
+                "plain_text": newContent,
+                "href": null
+              }
+            ]
+          }
+        }
+      ]
+    };
+
+    var url = Uri.parse('https://api.notion.com/v1/blocks/$pageID/children');
     http.patch(
       url,
       headers: {

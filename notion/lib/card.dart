@@ -44,8 +44,15 @@ class _PageCardState extends State<PageCard> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Page(pageID: widget.id)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Page(
+              pageID: widget.id,
+              pageTitle: widget.title,
+            ),
+          ),
+        );
       },
       child: Container(
         margin: EdgeInsets.all(10),
