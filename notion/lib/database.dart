@@ -104,6 +104,8 @@ class Database {
       List<String> existingBlocks, String pageID, String newContent) async {
     await deletePageContent(existingBlocks);
 
+    if (newContent == "") return;
+
     var updateData = {
       "children": [
         {
