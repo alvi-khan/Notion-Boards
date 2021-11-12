@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:notion/models/card_list_model.dart';
 import 'package:notion/models/page_model.dart';
@@ -8,6 +9,29 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class Database {
   static String databaseID = dotenv.env['DATABASE_ID']!;
   static String token = dotenv.env['TOKEN']!;
+
+  static void getToken(String accessCode) async {
+    String clientID = dotenv.env['CLIENT_ID']!;
+    String clientSecret = dotenv.env['CLIENT_SECRET']!;
+
+    String credentials = clientID + ":" + clientSecret;
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+    String encodedCredentials = stringToBase64.encode(credentials);
+
+    var url = Uri.parse('https://api.notion.com/v1/oauth/token');
+    var response = await http.post(url,
+        headers: {
+          'Authorization': 'Basic ' + encodedCredentials,
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          "grant_type": "authorization_code",
+          "code": accessCode,
+          "redirect_uri": 'https://www.google.com/',
+        }));
+    String token = jsonDecode(response.body)['access_token'];
+    Hive.box('NotionBoards').put('TOKEN', token);
+  }
 
   static Future<StructureModel> getStructure() async {
     var url = Uri.parse('https://api.notion.com/v1/databases/$databaseID');
