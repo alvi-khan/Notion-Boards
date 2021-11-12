@@ -94,7 +94,7 @@ class _CardListViewState extends State<CardListView> {
               category: pageCategories[index]);
         } else {
           return InkWell(
-            onTap: () {},
+            onTap: () => Database.addPage(),
             child: Container(
               margin: EdgeInsets.all(10),
               padding: EdgeInsets.all(20),

@@ -22,6 +22,31 @@ class Database {
     return structureModel;
   }
 
+  static void addPage() {
+    var data = {
+      "parent": {"database_id": databaseID},
+      "properties": {
+        "Name": {
+          "title": [
+            {
+              "text": {"content": "New Page"}
+            }
+          ]
+        },
+      },
+    };
+    var url = Uri.parse('https://api.notion.com/v1/pages');
+    http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Notion-Version': '2021-08-16',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
   static Future<CardListModel> getPages() async {
     var url =
         Uri.parse('https://api.notion.com/v1/databases/$databaseID/query');
