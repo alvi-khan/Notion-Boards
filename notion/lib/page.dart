@@ -38,7 +38,9 @@ class PageBody extends StatefulWidget {
 class _PageBodyState extends State<PageBody> {
   List<String> existingBlocks = [];
   String bodyContent = '';
+  String titleContent = '';
   TextEditingController bodyController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
   void getPageContent() async {
     PageModel pageModel = await Database.getPageContent(widget.pageID);
@@ -55,7 +57,9 @@ class _PageBodyState extends State<PageBody> {
     if (mounted) {
       setState(() {
         bodyContent = pageContent;
+        titleContent = widget.pageTitle;
         bodyController.text = bodyContent;
+        titleController.text = titleContent;
       });
     }
   }
@@ -79,33 +83,40 @@ class _PageBodyState extends State<PageBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, titleController.text);
+        return false;
+      },
+      child: Container(
+        margin: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: Colors.blueGrey.shade200, width: 2),
                 ),
               ),
-              child: Text(
-                widget.pageTitle,
+              child: TextField(
+                controller: titleController,
                 style: const TextStyle(color: Colors.white, fontSize: 36),
-              )),
-          const SizedBox(height: 30),
-          Expanded(
-            child: TextField(
-              controller: bodyController,
-              maxLines: null,
-              style: const TextStyle(color: Colors.white, fontSize: 24),
-              decoration: null,
+                decoration: null,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 30),
+            Expanded(
+              child: TextField(
+                controller: bodyController,
+                maxLines: null,
+                style: const TextStyle(color: Colors.white, fontSize: 24),
+                decoration: null,
+              ),
+            ),
+          ],
+        ),
       ),
     );
-    ;
   }
 }

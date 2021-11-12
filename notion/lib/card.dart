@@ -18,10 +18,11 @@ class PageCard extends StatefulWidget {
 }
 
 class _PageCardState extends State<PageCard> {
-  void updateCategory(String category) {
-    Database.updatePage(widget.id, category);
+  void updatePage(String title, String category) {
+    Database.updatePage(widget.id, title, category);
     setState(() {
       widget.category = category;
+      widget.title = title;
     });
   }
 
@@ -40,20 +41,23 @@ class _PageCardState extends State<PageCard> {
     }
   }
 
+  void goToNextPage() async {
+    String title = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Page(
+          pageID: widget.id,
+          pageTitle: widget.title,
+        ),
+      ),
+    );
+    if (title != "") updatePage(title, widget.category);
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Page(
-              pageID: widget.id,
-              pageTitle: widget.title,
-            ),
-          ),
-        );
-      },
+      onTap: () => goToNextPage(),
       child: Container(
         margin: EdgeInsets.all(10),
         padding: EdgeInsets.all(20),
@@ -86,7 +90,7 @@ class _PageCardState extends State<PageCard> {
                 );
               }).toList(),
               onChanged: (value) {
-                updateCategory(value.toString());
+                updatePage(widget.title, value.toString());
               },
               value: widget.category,
               style: TextStyle(fontSize: 16, color: Colors.black54),

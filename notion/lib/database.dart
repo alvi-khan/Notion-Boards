@@ -36,7 +36,7 @@ class Database {
     return cardListModel;
   }
 
-  static void updatePage(String id, dynamic category) {
+  static void updatePage(String id, String title, dynamic category) {
     var updateData = {
       "properties": {
         "Status": {
@@ -44,6 +44,18 @@ class Database {
             "select": null
           else
             "select": {"name": "$category"}
+        },
+        "Name": {
+          "id": "title",
+          "type": "title",
+          "title": [
+            {
+              "type": "text",
+              "text": {"content": title, "link": null},
+              "plain_text": title,
+              "href": null
+            }
+          ]
         }
       }
     };
