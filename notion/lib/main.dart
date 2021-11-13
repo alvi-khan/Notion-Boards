@@ -11,7 +11,6 @@ Future main() async {
   await dotenv.load(fileName: '.env');
   await Hive.initFlutter();
   await Hive.openBox('NotionBoards');
-  Hive.box('NotionBoards').delete('TOKEN');
   runApp(const MyApp());
 }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:notion/change_notifier.dart';
 import 'package:notion/models/card_list_model.dart';
 import 'package:notion/models/structure_model.dart';
@@ -26,6 +27,9 @@ class _CardListViewState extends State<CardListView> {
   List<String> colors = [];
 
   void getPages() async {
+    if (Hive.box('NotionBoards').get('DATABASE_ID') == null) {
+      await Database.getDatabaseIDs();
+    }
     CardListModel cardListModel = await Database.getPages();
     List<String> pageIDs = [];
     List<String> pageTitles = [];
@@ -50,6 +54,9 @@ class _CardListViewState extends State<CardListView> {
   }
 
   void getStructure() async {
+    if (Hive.box('NotionBoards').get('DATABASE_ID') == null) {
+      await Database.getDatabaseIDs();
+    }
     StructureModel structureModel = await Database.getStructure();
     List<Option> options = structureModel.properties!.status!.select!.options!;
     List<String> categories = [];

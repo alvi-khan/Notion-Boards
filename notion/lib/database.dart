@@ -7,10 +7,8 @@ import 'package:notion/models/structure_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Database {
-  static String databaseID = dotenv.env['DATABASE_ID']!;
-  static String token = dotenv.env['TOKEN']!;
 
-  static void getToken(String accessCode) async {
+  static Future<bool> getToken(String accessCode) async {
     String clientID = dotenv.env['CLIENT_ID']!;
     String clientSecret = dotenv.env['CLIENT_SECRET']!;
 
@@ -31,14 +29,35 @@ class Database {
         }));
     String token = jsonDecode(response.body)['access_token'];
     Hive.box('NotionBoards').put('TOKEN', token);
+    return true;
+  }
+
+  static Future<bool> getDatabaseIDs() async {
+    Set<String> databaseIDS = {};
+    var url = Uri.parse('https://api.notion.com/v1/search');
+    var response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
+        'Notion-Version': '2021-08-16',
+      },
+    );
+    for (var result in jsonDecode(response.body)['results']) {
+      if (result['parent']['type'] == 'database_id') {
+        databaseIDS.add(result['parent']['database_id']);
+      }
+    }
+    Hive.box('NotionBoards').put('DATABASE_ID', databaseIDS.first);
+    return true;
   }
 
   static Future<StructureModel> getStructure() async {
+    var databaseID = Hive.box('NotionBoards').get('DATABASE_ID');
     var url = Uri.parse('https://api.notion.com/v1/databases/$databaseID');
     var response = await http.get(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
         'Notion-Version': '2021-08-16',
       },
     );
@@ -47,6 +66,7 @@ class Database {
   }
 
   static void addPage() {
+    var databaseID = Hive.box('NotionBoards').get('DATABASE_ID');
     var data = {
       "parent": {"database_id": databaseID},
       "properties": {
@@ -63,7 +83,7 @@ class Database {
     http.post(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
         'Notion-Version': '2021-08-16',
         'Content-Type': 'application/json',
       },
@@ -72,12 +92,13 @@ class Database {
   }
 
   static Future<CardListModel> getPages() async {
+    var databaseID = Hive.box('NotionBoards').get('DATABASE_ID');
     var url =
         Uri.parse('https://api.notion.com/v1/databases/$databaseID/query');
     var response = await http.post(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
         'Notion-Version': '2021-08-16',
       },
     );
@@ -113,7 +134,7 @@ class Database {
     http.patch(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
         'Notion-Version': '2021-08-16',
         'Content-Type': 'application/json',
       },
@@ -126,7 +147,7 @@ class Database {
     var response = await http.get(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
         'Notion-Version': '2021-08-16',
       },
     );
@@ -140,7 +161,7 @@ class Database {
       await http.delete(
         url,
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
           'Notion-Version': '2021-08-16',
           'Content-Type': 'application/json',
         },
@@ -178,7 +199,7 @@ class Database {
     http.patch(
       url,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ' + Hive.box('NotionBoards').get('TOKEN'),
         'Notion-Version': '2021-08-16',
         'Content-Type': 'application/json',
       },

@@ -17,16 +17,15 @@ class _AuthPageState extends State<AuthPage> {
   String redirectURL = 'https://www.google.com/';
   String accessCode = '';
 
-  void getAuthCode(String requestURL) {
+  Future<bool> getAuthCode(String requestURL) async {
     String? code = Uri.parse(requestURL).queryParameters['code'];
     if (code != null) {
       setState(() {
         accessCode = code;
       });
-      Database.getToken(code);
-    } else {
-      // TODO handle denials/errors
+      await Database.getToken(code);
     }
+    return true;
   }
 
   @override
@@ -37,9 +36,9 @@ class _AuthPageState extends State<AuthPage> {
       child: WebView(
         initialUrl: accessCodeURL,
         javascriptMode: JavascriptMode.unrestricted,
-        navigationDelegate: (NavigationRequest request) {
+        navigationDelegate: (NavigationRequest request) async {
           if (request.url.startsWith('https://www.google.com')) {
-            getAuthCode(request.url);
+            await getAuthCode(request.url);
             Navigator.pop(context);
             return NavigationDecision.prevent;
           }
