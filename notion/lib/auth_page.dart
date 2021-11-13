@@ -32,18 +32,21 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     var accessCodeURL =
         "$authorizationURL?owner=user&client_id=$clientID&redirect_uri=$redirectURL&response_type=code";
-    return SafeArea(
-      child: WebView(
-        initialUrl: accessCodeURL,
-        javascriptMode: JavascriptMode.unrestricted,
-        navigationDelegate: (NavigationRequest request) async {
-          if (request.url.startsWith('https://www.google.com')) {
-            await getAuthCode(request.url);
-            Navigator.pop(context);
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
+    return Container(
+      color: Colors.white,
+      child: SafeArea(
+        child: WebView(
+          initialUrl: accessCodeURL,
+          javascriptMode: JavascriptMode.unrestricted,
+          navigationDelegate: (NavigationRequest request) async {
+            if (request.url.startsWith('https://www.google.com')) {
+              await getAuthCode(request.url);
+              Navigator.pop(context);
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate;
+          },
+        ),
       ),
     );
   }
