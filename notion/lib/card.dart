@@ -56,48 +56,51 @@ class _PageCardState extends State<PageCard> {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => goToNextPage(),
-      child: Container(
-        margin: EdgeInsets.all(10),
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.blueGrey.shade200, width: 2),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.blueGrey.shade700),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Text(
-              widget.title,
-              style: TextStyle(fontSize: 24, color: Colors.white),
-            ),
-            DropdownButtonHideUnderline(
-                child: DropdownButton(
-              borderRadius: BorderRadius.circular(10),
-              items: PageCard.categories.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: getColor(value.toString()),
+    return Container(
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blueGrey.shade200, width: 2),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: InkWell(
+        onTap: () => goToNextPage(),
+        child: Ink(
+          padding: EdgeInsets.all(20),
+          color: Colors.blueGrey.shade700,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                widget.title,
+                style: TextStyle(fontSize: 24, color: Colors.white),
+              ),
+              DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                borderRadius: BorderRadius.circular(10),
+                items: PageCard.categories.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: getColor(value.toString()),
+                      ),
+                      child: Text(value),
+                      padding: EdgeInsets.all(8),
                     ),
-                    child: Text(value),
-                    padding: EdgeInsets.all(8),
-                  ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                updatePage(widget.title, value.toString());
-              },
-              value: widget.category,
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-              dropdownColor: Colors.blueGrey.shade600,
-              icon: Container(),
-            )),
-          ],
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  updatePage(widget.title, value.toString());
+                },
+                value: widget.category,
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+                dropdownColor: Colors.blueGrey.shade600,
+                icon: Container(),
+              )),
+            ],
+          ),
         ),
       ),
     );
