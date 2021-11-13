@@ -76,6 +76,41 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Container signInPage() {
+    return Container(
+      color: Colors.blueGrey.shade900,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(width: double.infinity),
+          Container(
+            child: Text(
+              "NOTION\nBOARDS",
+              style: TextStyle(color: Colors.white, fontSize: 44),
+            ),
+          ),
+          SizedBox(height: 50),
+          ElevatedButton(
+            child: Text(
+              "Sign In",
+              style: TextStyle(fontSize: 24),
+            ),
+            onPressed: () => getToken(),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blueGrey.shade600,
+              onPrimary: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (haveToken) {
@@ -85,11 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.blueGrey.shade900,
       );
     } else {
-      return Container(
-        child: ElevatedButton(
-          child: Text("Sign In"),
-          onPressed: () => getToken(),
-        ),
+      return Scaffold(
+        appBar: appBar(),
+        body: signInPage(),
+        backgroundColor: Colors.blueGrey.shade900,
       );
     }
   }
