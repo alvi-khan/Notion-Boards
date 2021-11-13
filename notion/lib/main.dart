@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'Quicksand'),
       home: ChangeNotifierProvider<UIChangeNotifier>(
         create: (context) => UIChangeNotifier(),
         child: MyHomePage(),
