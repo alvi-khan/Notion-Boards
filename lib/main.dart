@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:notion/auth_page.dart';
+import 'package:notion/authentication/SignIn.dart';
 import 'package:notion/views/card_list_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: 'Quicksand'),
       home: ChangeNotifierProvider<UIChangeNotifier>(
         create: (context) => UIChangeNotifier(),
-        child: MyHomePage(),
+        child: const MyHomePage(),
       ),
     );
   }
@@ -48,20 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void getToken() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AuthPage(),
-      ),
-    );
-    if (Hive.box('NotionBoards').get('TOKEN') != null) {
-      setState(() {
-        haveToken = true;
-      });
-    }
-  }
-
   AppBar? appBar() {
     if (Provider.of<UIChangeNotifier>(context).loading) {
       return null;
@@ -77,55 +62,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Container signInPage() {
-    return Container(
-      color: Colors.blueGrey.shade900,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(width: double.infinity),
-          Container(
-            child: Text(
-              "NOTION\nBOARDS",
-              style: TextStyle(color: Colors.white, fontSize: 44),
-            ),
-          ),
-          SizedBox(height: 50),
-          ElevatedButton(
-            child: Text(
-              "Sign In",
-              style: TextStyle(fontSize: 24),
-            ),
-            onPressed: () => getToken(),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.blueGrey.shade600,
-              onPrimary: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (haveToken) {
-      return Scaffold(
-        appBar: appBar(),
-        body: CardListView(),
-        backgroundColor: Colors.blueGrey.shade900,
-      );
-    } else {
-      return Scaffold(
-        appBar: appBar(),
-        body: signInPage(),
-        backgroundColor: Colors.blueGrey.shade900,
-      );
-    }
+    return Scaffold(
+      appBar: appBar(),
+      backgroundColor: Colors.blueGrey.shade900,
+      body: haveToken ? const CardListView() :
+      SignInPage(
+          context: context,
+          onSignIn: () {
+            setState(() => haveToken = true);
+          }),
+    );
   }
 }

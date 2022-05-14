@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
-import 'database.dart';
+import 'package:notion/database.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -20,9 +19,7 @@ class _AuthPageState extends State<AuthPage> {
   Future<bool> getAuthCode(String requestURL) async {
     String? code = Uri.parse(requestURL).queryParameters['code'];
     if (code != null) {
-      setState(() {
-        accessCode = code;
-      });
+      setState(() => accessCode = code);
       await Database.getToken(code);
     }
     return true;
